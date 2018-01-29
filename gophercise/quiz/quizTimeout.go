@@ -9,6 +9,18 @@ import (
 	"time"
 )
 
+/*
+var (
+	flagFilePath string
+	flagRandom   bool
+	flagTime     int
+)
+func init() {
+	flag.StringVar(&flagFilePath, "file", "questions.csv", "path/to/csv_file")
+	flag.BoolVar(&flagRandom, "random", true, "randomize order of questions")
+	flag.IntVar(&flagTime, "time", 10, "test duration")
+}*/
+
 func main14() {
 
 	path := "problems.txt"

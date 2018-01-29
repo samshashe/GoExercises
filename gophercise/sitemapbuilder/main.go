@@ -1,7 +1,7 @@
 package main
 
 import (
-	"exercise/gophercise/htmllinkparser/htmlparser"
+	"GoExercises/gophercise/htmllinkparser/htmlparser"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	input := "http://meskelrestaurant.com/"
+	input := "http://calhoun.io"
 	host = GetHost(input)
 	GetLink(input)
 	for k, _ := range linksVisited {
