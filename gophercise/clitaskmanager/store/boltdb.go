@@ -1,18 +1,12 @@
-package main
+package store
 
-/* import (
+import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
 
 	"github.com/boltdb/bolt"
 )
-
-type Task struct {
-	ID        int
-	Name      string
-	Completed bool
-}
 
 func setupDB() (*bolt.DB, error) {
 	db, err := bolt.Open("task.db", 0600, nil)
@@ -104,7 +98,7 @@ func GetTasks(db *bolt.DB, bucket string) []Task {
 			}
 			tasks = append(tasks, *value)
 
-			// fmt.Printf("key=%s, value=%s\n", k, v)
+			fmt.Printf("VALUES-------->key=%s, value=%s\n", k, v)
 		}
 		return nil
 	})
@@ -124,4 +118,4 @@ func itob(v int) []byte {
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, uint64(v))
 	return b
-} */
+}
