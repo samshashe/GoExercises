@@ -41,13 +41,15 @@ func NewMySQLDB(dsn string, dbName string) (*sql.DB, error) {
 	return db, db.Ping()
 }
 
-func (store *DBTaskStore) GetAll() ([]Task, error) {
+func (store *DBTaskStore) GetTask(state bool) ([]Task, error) {
 	rows, err := store.db.Query(
 		`
 		SELECT ID,Name,Completed,CreatedDate
 		FROM Task
+		WHERE Completed = ?
 		ORDER BY CreatedDate
-		`)
+		`,
+		state)
 
 	if err != nil {
 		return nil, err

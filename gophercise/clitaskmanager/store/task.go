@@ -3,7 +3,7 @@ package store
 import "time"
 
 type TaskStore interface {
-	GetAll() ([]Task, error)
+	GetTask(bool) ([]Task, error)
 	Add(Task) error
 	ToggleCompleted(string) error
 }
