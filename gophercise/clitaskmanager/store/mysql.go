@@ -38,10 +38,28 @@ func NewMySQLDB(dsn string, dbName string) (*sql.DB, error) {
 		panic(err)
 	}
 
+	GlobalMySQLDB = db
+
 	return db, db.Ping()
 }
 
-func (store *DBTaskStore) GetTask(state bool) ([]Task, error) {
+func (store *DBTaskStore) Add(task Task) error {
+	_, err := store.db.Exec(
+		`
+		REPLACE INTO Task
+			(ID,Name,Completed,CreatedDate)
+		VALUES
+			(?, ?, ?, ?)
+		`,
+		task.ID,
+		task.Name,
+		task.Completed,
+		task.CreatedDate,
+	)
+	return err
+}
+
+func (store *DBTaskStore) GetTasks(state bool) ([]Task, error) {
 	rows, err := store.db.Query(
 		`
 		SELECT ID,Name,Completed,CreatedDate
@@ -72,22 +90,6 @@ func (store *DBTaskStore) GetTask(state bool) ([]Task, error) {
 	}
 
 	return tasks, nil
-}
-
-func (store *DBTaskStore) Add(task Task) error {
-	_, err := store.db.Exec(
-		`
-		REPLACE INTO Task
-			(ID,Name,Completed,CreatedDate)
-		VALUES
-			(?, ?, ?, ?)
-		`,
-		task.ID,
-		task.Name,
-		task.Completed,
-		task.CreatedDate,
-	)
-	return err
 }
 
 func (store *DBTaskStore) ToggleCompleted(name string) error {

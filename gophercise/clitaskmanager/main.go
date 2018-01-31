@@ -11,12 +11,22 @@ import (
 )
 
 func init() {
-	db, err := store.NewMySQLDB("root:iis6!dfu@tcp(127.0.0.1:3306)/", "Task")
-	if err != nil {
-		panic(err)
+	dbStore := false
+
+	if dbStore {
+		_, err := store.NewMySQLDB("root:iis6!dfu@tcp(127.0.0.1:3306)/", "Task")
+		if err != nil {
+			panic(err)
+		}
+
+		store.GlobalTaskStore = store.NewDBTaskStore()
+	} else {
+		fileStore, err := store.NewFileTaskStore("store/tasks.json")
+		if err != nil {
+			panic(err)
+		}
+		store.GlobalTaskStore = fileStore
 	}
-	store.GlobalMySQLDB = db
-	store.GlobalTaskStore = store.NewDBTaskStore()
 }
 
 var help = `task is a CLI for managing your TODOs.
@@ -36,12 +46,12 @@ func main() {
 		fmt.Println(help)
 	}
 	if len(os.Args) == 2 && os.Args[1] == "list" {
-		tasks, err := store.GlobalTaskStore.GetTask(false)
+		tasks, err := store.GlobalTaskStore.GetTasks(false)
 		if err != nil {
 			log.Fatal(err)
 		}
-		for i, task := range tasks {
-			fmt.Println(i+1, ".", task.Name)
+		for i := 0; i < len(tasks); i++ {
+			fmt.Println(i+1, ".", tasks[i].Name)
 		}
 		if len(tasks) < 1 {
 			fmt.Println("you don't have any todos. use 'Task add taskName' to add a new one")
@@ -63,7 +73,7 @@ func main() {
 				if intValue < 1 {
 					log.Fatal("input should be greater than 0.")
 				}
-				tasks, err := store.GlobalTaskStore.GetTask(false)
+				tasks, err := store.GlobalTaskStore.GetTasks(false)
 				if err != nil {
 					log.Fatal(err)
 				}
