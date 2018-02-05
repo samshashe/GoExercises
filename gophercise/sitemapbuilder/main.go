@@ -7,50 +7,46 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 func main() {
-	input := "http://calhoun.io"
-	host = GetHost(input)
+	input := "http://www.dw.com/am"
+
 	GetLink(input)
-	for k, _ := range linksVisited {
-		fmt.Println(k)
-	}
+	// for k, _ := range linksVisited {
+	// 	fmt.Println(k)
+	// }
+	fmt.Printf("All links found in the domain are %d Links", len(linksVisited))
 }
 
-var linksVisited = make(map[string]int)
+var linksVisited = make(map[string]bool)
 var host string
 
-func GetLink(url string) {
-	linksVisited[url] = linksVisited[url] + 1
-	response, err := http.Get(url)
+func GetLink(inputUrl string) {
+	fmt.Println("Parent: -------->", inputUrl)
+	linksVisited[inputUrl] = true
+	response, err := http.Get(inputUrl)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	body, _ := ioutil.ReadAll(response.Body)
 
-	links := htmlparser.GetLinks(string(body))
+	links := htmlparser.GetDomainLinks(string(body), inputUrl)
 
 	for _, link := range links {
-		//fmt.Printf("%d. Href: %s  Text: %s \n", i+1, link.Href, link.Text)
-		fullpath := link.Href
-		if isRelative := strings.Index(link.Href, "://"); isRelative == -1 {
-			fullpath = "http://" + host + "/" + link.Href
-		}
-
-		_, ok := linksVisited[fullpath]
-		if ok == false && GetHost(url) == host {
-			GetLink(fullpath)
+		_, ok := linksVisited[link.Href]
+		if ok == false {
+			GetLink(link.Href)
 		}
 	}
 }
 
-func GetHost(input string) string {
-	u, err := url.Parse(input)
+func GetHost(inputUrl string) string {
+	u, err := url.Parse(inputUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return u.Host
 }
